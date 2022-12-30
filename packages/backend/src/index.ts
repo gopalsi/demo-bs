@@ -28,6 +28,7 @@ import scaffolder from './plugins/scaffolder';
 import proxy from './plugins/proxy';
 import techdocs from './plugins/techdocs';
 import search from './plugins/search';
+import healthcheck from './plugins/healthcheck';
 import { PluginEnvironment } from './types';
 import { ServerPermissionClient } from '@backstage/plugin-permission-node';
 import { DefaultIdentityClient } from '@backstage/plugin-auth-node';
@@ -85,6 +86,7 @@ async function main() {
   const techdocsEnv = useHotMemoize(module, () => createEnv('techdocs'));
   const searchEnv = useHotMemoize(module, () => createEnv('search'));
   const appEnv = useHotMemoize(module, () => createEnv('app'));
+  const healthcheckEnv = useHotMemoize(module, () => createEnv('healthcheck'));
 
   const apiRouter = Router();
   apiRouter.use('/catalog', await catalog(catalogEnv));
@@ -99,6 +101,7 @@ async function main() {
 
   const service = createServiceBuilder(module)
     .loadConfig(config)
+    .addRouter('', await healthcheck(healthcheckEnv))
     .addRouter('/api', apiRouter)
     .addRouter('', await app(appEnv));
 
