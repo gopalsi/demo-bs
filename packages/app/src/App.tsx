@@ -1,5 +1,5 @@
 import React from 'react';
-import { Navigate, Route } from 'react-router-dom';
+import { Route } from 'react-router-dom';
 import { apiDocsPlugin, ApiExplorerPage } from '@backstage/plugin-api-docs';
 import {
   CatalogEntityPage,
@@ -33,6 +33,12 @@ import { AppRouter, FlatRoutes } from '@backstage/core-app-api';
 import { CatalogGraphPage } from '@backstage/plugin-catalog-graph';
 import { RequirePermission } from '@backstage/plugin-permission-react';
 import { catalogEntityCreatePermission } from '@backstage/plugin-catalog-common/alpha';
+import { twTheme } from './themes/twTheme';
+import { ThemeProvider } from '@material-ui/core/styles';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import LightIcon from '@material-ui/icons/WbSunny';
+import { HomePage } from './components/home/HomePage';
+import { HomepageCompositionRoot } from '@backstage/plugin-home';
 
 const app = createApp({
   apis,
@@ -51,12 +57,26 @@ const app = createApp({
       catalogIndex: catalogPlugin.routes.catalogIndex,
     });
   },
+    themes: [{
+        id: 'tw-theme',
+        title: 'TW Theme Light',
+        variant: 'light',
+        icon: <LightIcon />,
+        Provider: ({ children }) => (
+            <ThemeProvider theme={twTheme}>
+                <CssBaseline>{children}</CssBaseline>
+            </ThemeProvider>
+        ),
+    }],
 });
 
 const routes = (
   <FlatRoutes>
-    <Route path="/" element={<Navigate to="catalog" />} />
+    {/*<Route path="/" element={<Navigate to="catalog" />} />*/}
     <Route path="/catalog" element={<CatalogIndexPage />} />
+      <Route path="/" element={<HomepageCompositionRoot />}>
+          <HomePage />
+      </Route>
     <Route
       path="/catalog/:namespace/:kind/:name"
       element={<CatalogEntityPage />}
