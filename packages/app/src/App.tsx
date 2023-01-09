@@ -39,6 +39,8 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import LightIcon from '@material-ui/icons/WbSunny';
 import { HomePage } from './components/home/HomePage';
 import { HomepageCompositionRoot } from '@backstage/plugin-home';
+import { githubAuthApiRef } from '@backstage/core-plugin-api';
+import { SignInPage } from '@backstage/core-components';
 
 const app = createApp({
   apis,
@@ -68,6 +70,20 @@ const app = createApp({
             </ThemeProvider>
         ),
     }],
+    components: {
+        SignInPage: props => (
+            <SignInPage
+                {...props}
+                auto
+                provider={{
+                    id: 'github-auth-provider',
+                    title: 'GitHub',
+                    message: 'Sign in using Github',
+                    apiRef: githubAuthApiRef,
+                }}
+            />
+        )
+    }
 });
 
 const routes = (
